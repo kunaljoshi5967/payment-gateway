@@ -4,19 +4,24 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
+                echo 'Cloning the repository...'
                 git 'https://github.com/kunaljoshi5967/payment-gateway.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t payment-gateway .'
+                script {
+                    dockerImage = docker.build("payment-gateway-image")
+                }
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                sh 'docker run -d -p 8000:8000 --name payment-gateway payment-gateway'
+                script {
+                    dockerImage.run('-p 8000:8000')
+                }
             }
         }
     }
